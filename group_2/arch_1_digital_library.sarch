@@ -1,0 +1,80 @@
+architecture:
+    software_system = digital_library
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component web_ui (presentation > web_frontend)
+            component mobile_app (presentation > mobile_frontend)
+
+            # Logic Layer - Microservices
+            component catalog_ms (logic > microservice):
+                programming_language: Python
+            component user_ms (logic > microservice):
+                programming_language: Python
+            component loan_ms (logic > microservice):
+                programming_language: Python
+            component recommendation_ms (logic > microservice):
+                programming_language: Python
+
+            # Communication Components
+            component api_gateway (communication > api_gateway)
+            component message_broker (communication > message_broker)
+            component orchestrator (communication > orchestrator)
+
+            # Data Layer
+            component catalog_db (data > database)
+            component users_db (data > database)
+            component loans_db (data > database)
+            component recommendations_db (data > database)
+
+            # Infrastructure Components
+            component load_balancer (infrastructure > load_balancer)
+            component reverse_proxy (infrastructure > reverse_proxy)
+            component firewall (infrastructure > firewall)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector DBConnectorCatalog : db_connector
+            connector DBConnectorUsers : db_connector
+            connector DBConnectorLoans : db_connector
+            connector DBConnectorRecommendations : db_connector
+            connector BrokerConnector : amqp
+
+        relations:
+            # Frontend access
+            attachment (web_ui -> HttpUI -> load_balancer)
+            attachment (mobile_app -> HttpUI -> load_balancer)
+            attachment (load_balancer -> HttpUI -> reverse_proxy)
+            attachment (reverse_proxy -> RestAPI -> api_gateway)
+
+            # API Gateway routes to microservices
+            attachment (api_gateway -> RestAPI -> catalog_ms)
+            attachment (api_gateway -> RestAPI -> user_ms)
+            attachment (api_gateway -> RestAPI -> loan_ms)
+            attachment (api_gateway -> RestAPI -> recommendation_ms)
+
+            # Event-driven communication
+            attachment (catalog_ms -> BrokerConnector -> message_broker)
+            attachment (loan_ms -> BrokerConnector -> message_broker)
+            attachment (user_ms -> BrokerConnector -> message_broker)
+            attachment (recommendation_ms -> BrokerConnector -> message_broker)
+
+            # Orchestration for complex workflows
+            attachment (orchestrator -> RestAPI -> loan_ms)
+            attachment (orchestrator -> RestAPI -> recommendation_ms)
+
+            # Database connections
+            attachment (catalog_ms -> DBConnectorCatalog -> catalog_db)
+            attachment (user_ms -> DBConnectorUsers -> users_db)
+            attachment (loan_ms -> DBConnectorLoans -> loans_db)
+            attachment (recommendation_ms -> DBConnectorRecommendations -> recommendations_db)
+
+            # Security enforcement
+            attachment (firewall -> HttpUI -> web_ui)
+            attachment (firewall -> HttpUI -> mobile_app)
+
+    deployment:
+        elements:
+        relations:
