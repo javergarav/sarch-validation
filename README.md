@@ -21,7 +21,7 @@ Inside each group, every system is documented in a dedicated `.sarch` file, whic
 
 ---
 
-## Group 1 – Open Source Projects  
+## Group 1 – Open-source Projects  
 
 These are **real-world open-source projects** manually collected from:
 
