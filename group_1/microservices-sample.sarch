@@ -1,0 +1,61 @@
+architecture:
+    software_system = microservices_sample
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component web_ui (presentation > web_frontend)
+
+            # Logic Layer - Microservices
+            component user_service (logic > microservice):
+                programming_language: Java
+            component product_service (logic > microservice):
+                programming_language: Java
+            component order_service (logic > microservice):
+                programming_language: Java
+
+            # Data Layer (databases per microservice)
+            component users_db (data > database)
+            component products_db (data > database)
+            component orders_db (data > database)
+
+            # Communication Components
+            component api_gateway (communication > api_gateway)
+            component message_broker (communication > message_broker)
+
+            # Infrastructure Components
+            component load_balancer (infrastructure > load_balancer)
+            component reverse_proxy (infrastructure > reverse_proxy)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector DBUsers : db_connector
+            connector DBProducts : db_connector
+            connector DBOrders : db_connector
+            connector BrokerConnector : amqp
+
+        relations:
+            # Frontend access
+            attachment (web_ui -> HttpUI -> load_balancer)
+            attachment (load_balancer -> HttpUI -> reverse_proxy)
+            attachment (reverse_proxy -> RestAPI -> api_gateway)
+
+            # API Gateway routes to microservices
+            attachment (api_gateway -> RestAPI -> user_service)
+            attachment (api_gateway -> RestAPI -> product_service)
+            attachment (api_gateway -> RestAPI -> order_service)
+
+            # Event-driven communication
+            attachment (user_service -> BrokerConnector -> message_broker)
+            attachment (product_service -> BrokerConnector -> message_broker)
+            attachment (order_service -> BrokerConnector -> message_broker)
+
+            # Database connections
+            attachment (user_service -> DBUsers -> users_db)
+            attachment (product_service -> DBProducts -> products_db)
+            attachment (order_service -> DBOrders -> orders_db)
+
+    deployment:
+        elements:
+        relations:

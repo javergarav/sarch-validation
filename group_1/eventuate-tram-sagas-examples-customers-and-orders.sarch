@@ -1,0 +1,51 @@
+architecture:
+    software_system = eventuate_tram_sagas_customers_orders
+
+    component_and_connector:
+        elements:
+            # Frontend (Presentation Layer)
+            component orders_web (presentation > web_frontend)
+
+            # Microservices (Logic Layer)
+            component customer_ms (logic > microservice):
+                programming_language: Java
+            component order_ms (logic > microservice):
+                programming_language: Java
+
+            # Saga Orchestrator (Coordination of distributed transactions)
+            component saga_orchestrator (communication > orchestrator)
+
+            # Message Broker for event-driven communication
+            component event_broker (communication > message_broker)
+
+            # Databases (per microservice, ensuring consistency in Saga steps)
+            component customer_db (data > database)
+            component order_db (data > database)
+
+            # API Gateway to expose services
+            component api_gateway (communication > api_gateway)
+
+        relations:
+            # Frontend communicates with the system via API Gateway
+            attachment (orders_web -> rest_http -> api_gateway)
+
+            # API Gateway routes requests to the microservices
+            attachment (api_gateway -> rest_http -> customer_ms)
+            attachment (api_gateway -> rest_http -> order_ms)
+
+            # Microservices coordinate distributed transactions via Saga Orchestrator
+            attachment (order_ms -> rest_http -> saga_orchestrator)
+            attachment (customer_ms -> rest_http -> saga_orchestrator)
+
+            # Saga Orchestrator and microservices use event broker for async communication
+            attachment (saga_orchestrator -> amqp -> event_broker)
+            attachment (order_ms -> amqp -> event_broker)
+            attachment (customer_ms -> amqp -> event_broker)
+
+            # Each microservice manages its own database
+            attachment (order_ms -> db_connector -> order_db)
+            attachment (customer_ms -> db_connector -> customer_db)
+
+    deployment:
+        elements:
+        relations:

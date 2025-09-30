@@ -26,69 +26,69 @@ Inside each group, every system is documented in a dedicated `.sarch` file, whic
 These are **real-world open-source projects** manually collected from GitHub.  
 They provide concrete examples of microservice-based architectures with different domains, technologies, and integration patterns.  
 
-### 📌 Included Projects  
+### Included Projects  
 
-- **[abixen/abixen-platform](https://github.com/abixen/abixen-platform)**  
+1. **[abixen/abixen-platform](https://github.com/abixen/abixen-platform)**  
   A modular platform for building enterprise applications using microservices and data flow pipelines.  
   Focus: **data-driven architecture**, microservices orchestration, and scalability.  
 
-- **[xebialabs/e-commerce-microservice](https://github.com/xebialabs/e-commerce-microservice)**  
+2. **[xebialabs/e-commerce-microservice](https://github.com/xebialabs/e-commerce-microservice)**  
   An e-commerce application demonstrating microservice architecture principles.  
   Focus: **transactional workflows, service interaction, and API communication**.  
 
-- **[Microservice-API-Patterns/LakesideMutual](https://github.com/Microservice-API-Patterns/LakesideMutual)**  
+3. **[Microservice-API-Patterns/LakesideMutual](https://github.com/Microservice-API-Patterns/LakesideMutual)**  
   An insurance company system built to illustrate **Microservice API patterns**.  
   Focus: **API gateway, backend-for-frontend, service decomposition patterns**.  
 
-- **[idugalic/micro-company](https://github.com/idugalic/micro-company)**  
+4. **[idugalic/micro-company](https://github.com/idugalic/micro-company)**  
   A sample company domain using DDD (Domain-Driven Design) with microservices.  
   Focus: **event-driven architecture, CQRS, and bounded contexts**.  
 
-- **[eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders](https://github.com/eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders)**  
+5. **[eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders](https://github.com/eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders)**  
   Demonstrates the **Saga pattern** for managing distributed transactions.  
   Focus: **fault tolerance, consistency, and resiliency in microservices**.  
 
-- **[spring-petclinic/spring-petclinic-microservices](https://github.com/spring-petclinic/spring-petclinic-microservices)**  
+6. **[spring-petclinic/spring-petclinic-microservices](https://github.com/spring-petclinic/spring-petclinic-microservices)**  
   A well-known case study for microservice architectures.  
   Focus: **service decomposition, API gateway, service discovery, monitoring, and resilience patterns**.  
 
-- **[sqshq/piggymetrics](https://github.com/sqshq/piggymetrics)**  
+7. **[sqshq/piggymetrics](https://github.com/sqshq/piggymetrics)**  
   A personal finance app based on microservices.  
   Focus: **Spring Boot, Spring Cloud, API gateway, config server, monitoring, and distributed tracing**.  
 
-- **[mudigal-technologies/microservices-sample](https://github.com/mudigal-technologies/microservices-sample)**  
+8. **[mudigal-technologies/microservices-sample](https://github.com/mudigal-technologies/microservices-sample)**  
   An example of a Java Spring Boot microservices project.  
   Focus: **basic service interaction and database integration**.  
 
-- **[anilallewar/microservices-basics-spring-boot](https://github.com/anilallewar/microservices-basics-spring-boot)**  
+9. **[anilallewar/microservices-basics-spring-boot](https://github.com/anilallewar/microservices-basics-spring-boot)**  
   A starter template for building microservices.  
   Focus: **Spring Boot, REST APIs, and service orchestration basics**.  
 
-- **[apssouza22/java-microservice](https://github.com/apssouza22/java-microservice)**  
+10. **[apssouza22/java-microservice](https://github.com/apssouza22/java-microservice)**  
   A Java microservices sample project.  
   Focus: **REST APIs, fault isolation, and modular service design**.  
 
-- **[fernandoabcampos/spring-netflix-oss-microservices](https://github.com/fernandoabcampos/spring-netflix-oss-microservices)**  
+11. **[fernandoabcampos/spring-netflix-oss-microservices](https://github.com/fernandoabcampos/spring-netflix-oss-microservices)**  
   Demonstrates Netflix OSS stack for microservices.  
   Focus: **Eureka (service discovery), Zuul (API gateway), Hystrix (fault tolerance)**.  
 
-- **[ewolff/microservice](https://github.com/ewolff/microservice)**  
+12. **[ewolff/microservice](https://github.com/ewolff/microservice)**  
   A demo application for **microservice design patterns**.  
   Focus: **DDD, independent deployability, and scaling**.  
 
-- **[ewolff/microservice-kafka](https://github.com/ewolff/microservice-kafka)**  
+13. **[ewolff/microservice-kafka](https://github.com/ewolff/microservice-kafka)**  
   A variant of the previous project using **Kafka for asynchronous communication**.  
   Focus: **event-driven architecture and message-based decoupling**.  
 
-- **[aspnetrun/run-aspnetcore-microservices](https://github.com/aspnetrun/run-aspnetcore-microservices)**  
+14. **[aspnetrun/run-aspnetcore-microservices](https://github.com/aspnetrun/run-aspnetcore-microservices)**  
   A .NET Core implementation of an e-commerce system with microservices.  
   Focus: **ASP.NET Core, Docker, Kubernetes, and service orchestration**.  
 
-- **[gfawcett22/EnterprisePlanner](https://github.com/gfawcett22/EnterprisePlanner)**  
+15. **[gfawcett22/EnterprisePlanner](https://github.com/gfawcett22/EnterprisePlanner)**  
   A project management and planning tool built with microservices.  
   Focus: **enterprise workflows and modular services**.  
 
-- **[EdwinVW/pitstop](https://github.com/EdwinVW/pitstop)**  
+16. **[EdwinVW/pitstop](https://github.com/EdwinVW/pitstop)**  
   A garage management system based on microservices.  
   Focus: **event sourcing, CQRS, and cloud-native integration**.  
 

@@ -1,0 +1,98 @@
+architecture:
+    software_system = piggymetrics
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component web_frontend_ui (presentation > web_frontend)
+
+            # Logic Layer - Microservices
+            component accounts_ms (logic > microservice):
+                programming_language: Java
+            component limits_ms (logic > microservice):
+                programming_language: Java
+            component notifications_ms (logic > microservice):
+                programming_language: Java
+            component statistics_ms (logic > microservice):
+                programming_language: Java
+            component users_ms (logic > microservice):
+                programming_language: Java
+
+            # Supporting Services
+            component config_server (logic > microservice):
+                programming_language: Java
+            component discovery_service (logic > microservice):
+                programming_language: Java
+
+            # Communication Components
+            component api_gateway (communication > api_gateway)
+            component message_broker (communication > message_broker)
+
+            # Data Layer (each microservice has its own database)
+            component accounts_db (data > database)
+            component limits_db (data > database)
+            component notifications_db (data > database)
+            component statistics_db (data > database)
+            component users_db (data > database)
+
+            # Infrastructure Components for monitoring & tracing
+            component monitoring_server (infrastructure > load_balancer)
+            component tracing_server (infrastructure > reverse_proxy)
+
+        relations:
+            # Frontend access via API Gateway
+            attachment (web_frontend_ui -> rest_http -> api_gateway)
+
+            # API Gateway routes to core microservices
+            attachment (api_gateway -> rest_http -> accounts_ms)
+            attachment (api_gateway -> rest_http -> limits_ms)
+            attachment (api_gateway -> rest_http -> notifications_ms)
+            attachment (api_gateway -> rest_http -> statistics_ms)
+            attachment (api_gateway -> rest_http -> users_ms)
+
+            # Microservices communicate with config server for centralized configuration
+            attachment (accounts_ms -> rest_http -> config_server)
+            attachment (limits_ms -> rest_http -> config_server)
+            attachment (notifications_ms -> rest_http -> config_server)
+            attachment (statistics_ms -> rest_http -> config_server)
+            attachment (users_ms -> rest_http -> config_server)
+            attachment (api_gateway -> rest_http -> config_server)
+
+            # Service discovery for dynamic routing
+            attachment (accounts_ms -> rest_http -> discovery_service)
+            attachment (limits_ms -> rest_http -> discovery_service)
+            attachment (notifications_ms -> rest_http -> discovery_service)
+            attachment (statistics_ms -> rest_http -> discovery_service)
+            attachment (users_ms -> rest_http -> discovery_service)
+            attachment (api_gateway -> rest_http -> discovery_service)
+
+            # Event-driven communication via message broker
+            attachment (accounts_ms -> amqp -> message_broker)
+            attachment (limits_ms -> amqp -> message_broker)
+            attachment (notifications_ms -> amqp -> message_broker)
+            attachment (statistics_ms -> amqp -> message_broker)
+            attachment (users_ms -> amqp -> message_broker)
+
+            # Database connections per microservice
+            attachment (accounts_ms -> db_connector -> accounts_db)
+            attachment (limits_ms -> db_connector -> limits_db)
+            attachment (notifications_ms -> db_connector -> notifications_db)
+            attachment (statistics_ms -> db_connector -> statistics_db)
+            attachment (users_ms -> db_connector -> users_db)
+
+            # Monitoring and distributed tracing
+            attachment (accounts_ms -> rest_http -> monitoring_server)
+            attachment (limits_ms -> rest_http -> monitoring_server)
+            attachment (notifications_ms -> rest_http -> monitoring_server)
+            attachment (statistics_ms -> rest_http -> monitoring_server)
+            attachment (users_ms -> rest_http -> monitoring_server)
+
+            attachment (accounts_ms -> rest_http -> tracing_server)
+            attachment (limits_ms -> rest_http -> tracing_server)
+            attachment (notifications_ms -> rest_http -> tracing_server)
+            attachment (statistics_ms -> rest_http -> tracing_server)
+            attachment (users_ms -> rest_http -> tracing_server)
+
+    deployment:
+        elements:
+        relations:

@@ -1,0 +1,80 @@
+architecture:
+    software_system = spring_petclinic_microservices
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component petclinic_web (presentation > web_frontend)
+
+            # Logic Layer - Core microservices
+            component customers_ms (logic > microservice):
+                programming_language: Java
+            component visits_ms (logic > microservice):
+                programming_language: Java
+            component vets_ms (logic > microservice):
+                programming_language: Java
+
+            # Supporting microservices
+            component config_ms (logic > microservice):
+                programming_language: Java
+            component discovery_ms (logic > microservice):
+                programming_language: Java
+
+            # Communication Layer
+            component api_gateway (communication > api_gateway)
+            component message_broker (communication > message_broker)
+
+            # Data Layer (databases for each service)
+            component customers_db (data > database)
+            component visits_db (data > database)
+            component vets_db (data > database)
+
+            # Infrastructure / Monitoring
+            component tracing_server (infrastructure > reverse_proxy)
+            component monitoring_server (infrastructure > load_balancer)
+
+        relations:
+            # Web frontend -> API Gateway
+            attachment (petclinic_web -> rest_http -> api_gateway)
+
+            # API Gateway routes to microservices
+            attachment (api_gateway -> rest_http -> customers_ms)
+            attachment (api_gateway -> rest_http -> visits_ms)
+            attachment (api_gateway -> rest_http -> vets_ms)
+
+            # Service discovery supports routing and resilience
+            attachment (customers_ms -> rest_http -> discovery_ms)
+            attachment (visits_ms -> rest_http -> discovery_ms)
+            attachment (vets_ms -> rest_http -> discovery_ms)
+            attachment (api_gateway -> rest_http -> discovery_ms)
+
+            # Each microservice manages its own database
+            attachment (customers_ms -> db_connector -> customers_db)
+            attachment (visits_ms -> db_connector -> visits_db)
+            attachment (vets_ms -> db_connector -> vets_db)
+
+            # Config service used by all microservices
+            attachment (customers_ms -> rest_http -> config_ms)
+            attachment (visits_ms -> rest_http -> config_ms)
+            attachment (vets_ms -> rest_http -> config_ms)
+            attachment (api_gateway -> rest_http -> config_ms)
+
+            # Event-driven communication through message broker
+            attachment (customers_ms -> amqp -> message_broker)
+            attachment (visits_ms -> amqp -> message_broker)
+            attachment (vets_ms -> amqp -> message_broker)
+
+            # Monitoring and tracing
+            attachment (customers_ms -> rest_http -> monitoring_server)
+            attachment (visits_ms -> rest_http -> monitoring_server)
+            attachment (vets_ms -> rest_http -> monitoring_server)
+            attachment (api_gateway -> rest_http -> monitoring_server)
+
+            attachment (customers_ms -> rest_http -> tracing_server)
+            attachment (visits_ms -> rest_http -> tracing_server)
+            attachment (vets_ms -> rest_http -> tracing_server)
+            attachment (api_gateway -> rest_http -> tracing_server)
+
+    deployment:
+        elements:
+        relations:

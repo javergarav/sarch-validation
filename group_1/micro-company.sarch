@@ -1,0 +1,49 @@
+architecture:
+    software_system = micro_company
+
+    component_and_connector:
+        elements:
+            # Frontends (Presentation Layer)
+            component company_web (presentation > web_frontend)
+            component company_mobile (presentation > mobile_frontend)
+
+            # Microservices (Logic Layer, DDD bounded contexts)
+            component employee_ms (logic > microservice):
+                programming_language: Java
+            component department_ms (logic > microservice):
+                programming_language: Java
+            component company_ms (logic > microservice):
+                programming_language: Java
+
+            # Communication (Event-driven + API)
+            component api_gateway (communication > api_gateway)
+            component event_broker (communication > message_broker)
+
+            # Data (CQRS style separation)
+            component employee_db (data > database)
+            component department_db (data > database)
+            component company_db (data > database)
+
+        relations:
+            # Frontends communicate via API Gateway
+            attachment (company_web -> rest_http -> api_gateway)
+            attachment (company_mobile -> rest_http -> api_gateway)
+
+            # API Gateway forwards requests to microservices
+            attachment (api_gateway -> rest_http -> company_ms)
+            attachment (api_gateway -> rest_http -> employee_ms)
+            attachment (api_gateway -> rest_http -> department_ms)
+
+            # Microservices use event broker for async communication (event-driven, CQRS)
+            attachment (company_ms -> amqp -> event_broker)
+            attachment (employee_ms -> amqp -> event_broker)
+            attachment (department_ms -> amqp -> event_broker)
+
+            # Databases per microservice (bounded context)
+            attachment (company_ms -> db_connector -> company_db)
+            attachment (employee_ms -> db_connector -> employee_db)
+            attachment (department_ms -> db_connector -> department_db)
+
+    deployment:
+        elements:
+        relations:

@@ -1,0 +1,89 @@
+architecture:
+    software_system = LakesideMutual
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component CustomerPortal (presentation > web_frontend)
+            component AgentPortal (presentation > web_frontend)
+            component BackOfficePortal (presentation > web_frontend)
+
+            # Logic Layer - Backends for Frontends (BFF)
+            component CustomerBFF (logic > microservice:
+                programming_language: Java)
+            component AgentBFF (logic > microservice:
+                programming_language: Java)
+            component BackOfficeBFF (logic > microservice:
+                programming_language: Java)
+
+            # Logic Layer - Core Business Microservices
+            component CustomerManagementService (logic > microservice:
+                programming_language: Java)
+            component PolicyManagementService (logic > microservice:
+                programming_language: Java)
+            component RiskManagementService (logic > microservice:
+                programming_language: Java)
+            component SalesManagementService (logic > microservice:
+                programming_language: Java)
+
+            # Data Layer - Per-service databases
+            component CustomersDB (data > database)
+            component PoliciesDB (data > database)
+            component RisksDB (data > database)
+            component SalesDB (data > database)
+
+            # Communication Components
+            component APIGateway (communication > api_gateway)
+            component MessageBroker (communication > message_broker)
+
+            # Infrastructure Components
+            component LoadBalancer (infrastructure > load_balancer)
+            component ReverseProxy (infrastructure > reverse_proxy)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector BrokerConnector : amqp
+            connector DBCustomers : db_connector
+            connector DBPolicies : db_connector
+            connector DBRisks : db_connector
+            connector DBSales : db_connector
+
+        relations:
+            # User access flows
+            attachment(CustomerPortal -> HttpUI -> LoadBalancer)
+            attachment(AgentPortal -> HttpUI -> LoadBalancer)
+            attachment(BackOfficePortal -> HttpUI -> LoadBalancer)
+
+            attachment(LoadBalancer -> HttpUI -> ReverseProxy)
+            attachment(ReverseProxy -> RestAPI -> APIGateway)
+
+            # API Gateway routes to BFFs
+            attachment(APIGateway -> RestAPI -> CustomerBFF)
+            attachment(APIGateway -> RestAPI -> AgentBFF)
+            attachment(APIGateway -> RestAPI -> BackOfficeBFF)
+
+            # BFFs connect to domain microservices
+            attachment(CustomerBFF -> RestAPI -> CustomerManagementService)
+            attachment(CustomerBFF -> RestAPI -> PolicyManagementService)
+
+            attachment(AgentBFF -> RestAPI -> SalesManagementService)
+            attachment(AgentBFF -> RestAPI -> PolicyManagementService)
+
+            attachment(BackOfficeBFF -> RestAPI -> RiskManagementService)
+            attachment(BackOfficeBFF -> RestAPI -> PolicyManagementService)
+
+            # Service-to-service communication via message broker
+            attachment(CustomerManagementService -> BrokerConnector -> MessageBroker)
+            attachment(PolicyManagementService -> BrokerConnector -> MessageBroker)
+            attachment(RiskManagementService -> BrokerConnector -> MessageBroker)
+            attachment(SalesManagementService -> BrokerConnector -> MessageBroker)
+
+            # Database connections
+            attachment(CustomerManagementService -> DBCustomers -> CustomersDB)
+            attachment(PolicyManagementService -> DBPolicies -> PoliciesDB)
+            attachment(RiskManagementService -> DBRisks -> RisksDB)
+            attachment(SalesManagementService -> DBSales -> SalesDB)
+
+    deployment:
+        elements:
+        relations:

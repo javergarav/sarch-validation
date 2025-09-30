@@ -1,0 +1,96 @@
+architecture:
+    software_system = run_aspnetcore_microservices
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component web_ui (presentation > web_frontend)
+            component mobile_app (presentation > mobile_frontend)
+
+            # Logic Layer - Microservices
+            component catalog_ms (logic > microservice):
+                programming_language: C#
+            component ordering_ms (logic > microservice):
+                programming_language: C#
+            component payment_ms (logic > microservice):
+                programming_language: C#
+            component discount_ms (logic > microservice):
+                programming_language: C#
+            component basket_ms (logic > microservice):
+                programming_language: C#
+
+            # Supporting Services
+            component config_server (logic > microservice):
+                programming_language: C#
+            component discovery_service (logic > microservice):
+                programming_language: C#
+
+            # Communication Components
+            component api_gateway (communication > api_gateway)
+            component message_broker (communication > message_broker)
+
+            # Data Layer
+            component catalog_db (data > database)
+            component ordering_db (data > database)
+            component payment_db (data > database)
+            component discount_db (data > database)
+            component basket_db (data > database)
+
+            # Infrastructure Components
+            component load_balancer (infrastructure > load_balancer)
+            component reverse_proxy (infrastructure > reverse_proxy)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector DBCatalog : db_connector
+            connector DBOrdering : db_connector
+            connector DBPayment : db_connector
+            connector DBDiscount : db_connector
+            connector DBBasket : db_connector
+            connector BrokerConnector : amqp
+
+        relations:
+            # Frontend access
+            attachment (web_ui -> HttpUI -> load_balancer)
+            attachment (mobile_app -> HttpUI -> load_balancer)
+            attachment (load_balancer -> HttpUI -> reverse_proxy)
+            attachment (reverse_proxy -> RestAPI -> api_gateway)
+
+            # API Gateway routes to microservices
+            attachment (api_gateway -> RestAPI -> catalog_ms)
+            attachment (api_gateway -> RestAPI -> ordering_ms)
+            attachment (api_gateway -> RestAPI -> payment_ms)
+            attachment (api_gateway -> RestAPI -> discount_ms)
+            attachment (api_gateway -> RestAPI -> basket_ms)
+
+            # Microservices communicate with config server and discovery service
+            attachment (catalog_ms -> RestAPI -> config_server)
+            attachment (ordering_ms -> RestAPI -> config_server)
+            attachment (payment_ms -> RestAPI -> config_server)
+            attachment (discount_ms -> RestAPI -> config_server)
+            attachment (basket_ms -> RestAPI -> config_server)
+
+            attachment (catalog_ms -> RestAPI -> discovery_service)
+            attachment (ordering_ms -> RestAPI -> discovery_service)
+            attachment (payment_ms -> RestAPI -> discovery_service)
+            attachment (discount_ms -> RestAPI -> discovery_service)
+            attachment (basket_ms -> RestAPI -> discovery_service)
+
+            # Event-driven communication
+            attachment (catalog_ms -> BrokerConnector -> message_broker)
+            attachment (ordering_ms -> BrokerConnector -> message_broker)
+            attachment (payment_ms -> BrokerConnector -> message_broker)
+            attachment (discount_ms -> BrokerConnector -> message_broker)
+            attachment (basket_ms -> BrokerConnector -> message_broker)
+
+            # Database connections
+            attachment (catalog_ms -> DBCatalog -> catalog_db)
+            attachment (ordering_ms -> DBOrdering -> ordering_db)
+            attachment (payment_ms -> DBPayment -> payment_db)
+            attachment (discount_ms -> DBDiscount -> discount_db)
+            attachment (basket_ms -> DBBasket -> basket_db)
+
+    deployment:
+        elements:
+        relations:

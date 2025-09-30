@@ -1,0 +1,68 @@
+architecture:
+    software_system = AbixenPlatform
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component WebUI (presentation > web_frontend)
+
+            # Logic Layer - Microservices
+            component DashboardService (logic > microservice:
+                programming_language: Java)
+            component AnalyticsService (logic > microservice:
+                programming_language: Java)
+            component DataProcessingService (logic > microservice:
+                programming_language: Java)
+            component WorkflowService (logic > microservice:
+                programming_language: Java)
+
+            # Data Layer
+            component PlatformDB (data > database)
+
+            # Communication Components
+            component APIGateway (communication > api_gateway)
+            component Orchestrator (communication > orchestrator)
+            component MessageBroker (communication > message_broker)
+
+            # Infrastructure Components
+            component LoadBalancer (infrastructure > load_balancer)
+            component ReverseProxy (infrastructure > reverse_proxy)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector BrokerConnector : amqp
+            connector DBConn : db_connector
+
+        relations:
+            # User access through web frontend
+            attachment(WebUI -> HttpUI -> LoadBalancer)
+            attachment(LoadBalancer -> HttpUI -> ReverseProxy)
+            attachment(ReverseProxy -> RestAPI -> APIGateway)
+
+            # API Gateway routes to microservices
+            attachment(APIGateway -> RestAPI -> DashboardService)
+            attachment(APIGateway -> RestAPI -> AnalyticsService)
+            attachment(APIGateway -> RestAPI -> DataProcessingService)
+            attachment(APIGateway -> RestAPI -> WorkflowService)
+
+            # Orchestrator coordinates services
+            attachment(Orchestrator -> RestAPI -> DashboardService)
+            attachment(Orchestrator -> RestAPI -> AnalyticsService)
+            attachment(Orchestrator -> RestAPI -> DataProcessingService)
+            attachment(Orchestrator -> RestAPI -> WorkflowService)
+
+            # Asynchronous communication
+            attachment(DashboardService -> BrokerConnector -> MessageBroker)
+            attachment(AnalyticsService -> BrokerConnector -> MessageBroker)
+            attachment(DataProcessingService -> BrokerConnector -> MessageBroker)
+            attachment(WorkflowService -> BrokerConnector -> MessageBroker)
+
+            # Database connections
+            attachment(DashboardService -> DBConn -> PlatformDB)
+            attachment(AnalyticsService -> DBConn -> PlatformDB)
+            attachment(DataProcessingService -> DBConn -> PlatformDB)
+            attachment(WorkflowService -> DBConn -> PlatformDB)
+
+    deployment:
+        elements:
+        relations:

@@ -1,0 +1,70 @@
+architecture:
+    software_system = pitstop
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component web_ui (presentation > web_frontend)
+            component mobile_app (presentation > mobile_frontend)
+
+            # Logic Layer - Microservices
+            component garage_ms (logic > microservice):
+                programming_language: Java
+            component vehicle_ms (logic > microservice):
+                programming_language: Java
+            component appointment_ms (logic > microservice):
+                programming_language: Java
+            component billing_ms (logic > microservice):
+                programming_language: Java
+
+            # Communication Components
+            component api_gateway (communication > api_gateway)
+            component message_broker (communication > message_broker)
+
+            # Data Layer - database per microservice
+            component garage_db (data > database)
+            component vehicle_db (data > database)
+            component appointment_db (data > database)
+            component billing_db (data > database)
+
+            # Infrastructure Components
+            component load_balancer (infrastructure > load_balancer)
+            component reverse_proxy (infrastructure > reverse_proxy)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector DBGarage : db_connector
+            connector DBVehicle : db_connector
+            connector DBAppointment : db_connector
+            connector DBBilling : db_connector
+            connector BrokerConnector : amqp
+
+        relations:
+            # Frontend access
+            attachment (web_ui -> HttpUI -> load_balancer)
+            attachment (mobile_app -> HttpUI -> load_balancer)
+            attachment (load_balancer -> HttpUI -> reverse_proxy)
+            attachment (reverse_proxy -> RestAPI -> api_gateway)
+
+            # API Gateway routes to microservices
+            attachment (api_gateway -> RestAPI -> garage_ms)
+            attachment (api_gateway -> RestAPI -> vehicle_ms)
+            attachment (api_gateway -> RestAPI -> appointment_ms)
+            attachment (api_gateway -> RestAPI -> billing_ms)
+
+            # Event-driven communication
+            attachment (garage_ms -> BrokerConnector -> message_broker)
+            attachment (vehicle_ms -> BrokerConnector -> message_broker)
+            attachment (appointment_ms -> BrokerConnector -> message_broker)
+            attachment (billing_ms -> BrokerConnector -> message_broker)
+
+            # Database connections
+            attachment (garage_ms -> DBGarage -> garage_db)
+            attachment (vehicle_ms -> DBVehicle -> vehicle_db)
+            attachment (appointment_ms -> DBAppointment -> appointment_db)
+            attachment (billing_ms -> DBBilling -> billing_db)
+
+    deployment:
+        elements:
+        relations:

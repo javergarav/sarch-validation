@@ -1,0 +1,72 @@
+architecture:
+    software_system = EcommerceMicroservice
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component WebStoreUI (presentation > web_frontend)
+
+            # Logic Layer - Microservices
+            component CatalogService (logic > microservice:
+                programming_language: Java)
+            component OrderService (logic > microservice:
+                programming_language: Java)
+            component PaymentService (logic > microservice:
+                programming_language: Java)
+            component ShippingService (logic > microservice:
+                programming_language: Java)
+            component CustomerService (logic > microservice:
+                programming_language: Java)
+
+            # Data Layer
+            component CatalogDB (data > database)
+            component OrdersDB (data > database)
+            component PaymentsDB (data > database)
+            component ShippingDB (data > database)
+            component CustomersDB (data > database)
+
+            # Communication Components
+            component APIGateway (communication > api_gateway)
+            component MessageBroker (communication > message_broker)
+
+            # Infrastructure Components
+            component LoadBalancer (infrastructure > load_balancer)
+            component ReverseProxy (infrastructure > reverse_proxy)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector BrokerConnector : amqp
+            connector DBCatalog : db_connector
+            connector DBOrders : db_connector
+            connector DBPayments : db_connector
+            connector DBShipping : db_connector
+            connector DBCustomers : db_connector
+
+        relations:
+            # User access through web frontend
+            attachment(WebStoreUI -> HttpUI -> LoadBalancer)
+            attachment(LoadBalancer -> HttpUI -> ReverseProxy)
+            attachment(ReverseProxy -> RestAPI -> APIGateway)
+
+            # API Gateway routes to domain microservices
+            attachment(APIGateway -> RestAPI -> CatalogService)
+            attachment(APIGateway -> RestAPI -> OrderService)
+            attachment(APIGateway -> RestAPI -> PaymentService)
+            attachment(APIGateway -> RestAPI -> ShippingService)
+            attachment(APIGateway -> RestAPI -> CustomerService)
+
+            # Microservices communication via message broker
+            attachment(OrderService -> BrokerConnector -> MessageBroker)
+            attachment(PaymentService -> BrokerConnector -> MessageBroker)
+            attachment(ShippingService -> BrokerConnector -> MessageBroker)
+
+            # Databases connections
+            attachment(CatalogService -> DBCatalog -> CatalogDB)
+            attachment(OrderService -> DBOrders -> OrdersDB)
+            attachment(PaymentService -> DBPayments -> PaymentsDB)
+            attachment(ShippingService -> DBShipping -> ShippingDB)
+            attachment(CustomerService -> DBCustomers -> CustomersDB)
+
+    deployment:
+        elements:
+        relations:

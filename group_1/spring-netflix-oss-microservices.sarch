@@ -1,0 +1,72 @@
+architecture:
+    software_system = spring_netflix_oss_microservices
+
+    component_and_connector:
+        elements:
+            # Presentation Layer
+            component web_ui (presentation > web_frontend)
+
+            # Logic Layer - Microservices
+            component user_service (logic > microservice):
+                programming_language: Java
+            component order_service (logic > microservice):
+                programming_language: Java
+            component product_service (logic > microservice):
+                programming_language: Java
+
+            # Supporting Services (Netflix OSS stack)
+            component eureka_server (logic > microservice):
+                programming_language: Java
+            component zuul_gateway (communication > api_gateway)
+            component hystrix_dashboard (infrastructure > load_balancer)
+
+            # Data Layer
+            component users_db (data > database)
+            component orders_db (data > database)
+            component products_db (data > database)
+
+            # Communication Components
+            component message_broker (communication > message_broker)
+
+            # Connectors
+            connector HttpUI : http
+            connector RestAPI : rest_http
+            connector DBUsers : db_connector
+            connector DBOrders : db_connector
+            connector DBProducts : db_connector
+            connector BrokerConnector : amqp
+
+        relations:
+            # Frontend access via Zuul Gateway
+            attachment (web_ui -> HttpUI -> zuul_gateway)
+
+            # API Gateway routes to microservices
+            attachment (zuul_gateway -> RestAPI -> user_service)
+            attachment (zuul_gateway -> RestAPI -> order_service)
+            attachment (zuul_gateway -> RestAPI -> product_service)
+
+            # Microservices register with Eureka for service discovery
+            attachment (user_service -> rest_http -> eureka_server)
+            attachment (order_service -> rest_http -> eureka_server)
+            attachment (product_service -> rest_http -> eureka_server)
+            attachment (zuul_gateway -> rest_http -> eureka_server)
+
+            # Event-driven communication
+            attachment (user_service -> BrokerConnector -> message_broker)
+            attachment (order_service -> BrokerConnector -> message_broker)
+            attachment (product_service -> BrokerConnector -> message_broker)
+
+            # Database connections
+            attachment (user_service -> DBUsers -> users_db)
+            attachment (order_service -> DBOrders -> orders_db)
+            attachment (product_service -> DBProducts -> products_db)
+
+            # Monitoring / fault tolerance
+            attachment (user_service -> rest_http -> hystrix_dashboard)
+            attachment (order_service -> rest_http -> hystrix_dashboard)
+            attachment (product_service -> rest_http -> hystrix_dashboard)
+            attachment (zuul_gateway -> rest_http -> hystrix_dashboard)
+
+    deployment:
+        elements:
+        relations:
