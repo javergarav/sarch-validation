@@ -1,12 +1,12 @@
-# Graph-driven Security Assurance in Web Software Architectures – Dataset
+# Sarch Dataset
 
-This repository contains the dataset used to validate the thesis **"Graph-driven Security Assurance in Web Software Architectures."**  
+This repository contains the dataset used to validate the PhD thesis **"Graph-Driven Security Assurance in Web Software Architectures"**.
 
-The goal is to provide a structured collection of **software architectures** that serve as study objects for:  
+The goal is to provide a structured collection of **software architecture descriptions** that serve as study objects for:  
 
-- Identifying architectural weaknesses  
-- Detecting security vulnerabilities  
-- Redesigning architectures with countermeasures  
+- Identifying architectural weaknesses.
+- Detecting security vulnerabilities.  
+- Redesigning architectures with countermeasures.  
 
 All of these activities are performed at the **security level**.  
 
@@ -14,17 +14,21 @@ All of these activities are performed at the **security level**.
 
 ## Dataset Structure  
 
-The dataset is organized into **three groups of architectures**.  
-Each group is represented by a folder (`group_1`, `group_2`, `group_3`).  
+The dataset is organized into **two groups of architecture descriptions**.  
+Each group is represented by a folder (`group_1`, `group_2`).  
 
-Inside each group, every system is documented in a dedicated `.sarch` file, which describes its architecture using the **SARCH language**.  
+Inside each group, every system is documented in a dedicated `.sarch` file, which describes its architecture using the **Sarch language**.  
 
 ---
 
 ## Group 1 – Open Source Projects  
 
-These are **real-world open-source projects** manually collected from GitHub.  
-They provide concrete examples of microservice-based architectures with different domains, technologies, and integration patterns.  
+These are **real-world open-source projects** manually collected from:
+
+* GitHub: manual review by keywords.
+* Previous Research Works: manual review in conference and journal papers.
+
+They provide concrete examples of web-based architectures with different domains, technologies, and patterns.
 
 ### Included Projects  
 
@@ -90,37 +94,15 @@ They provide concrete examples of microservice-based architectures with differen
 
 16. **[EdwinVW/pitstop](https://github.com/EdwinVW/pitstop)**  
   A garage management system based on microservices.  
-  Focus: **event sourcing, CQRS, and cloud-native integration**.  
+  Focus: **event sourcing, CQRS, and cloud-native integration**. 
 
----
+Sources:
 
-## Group 2 – Research Systems  
-
-This group contains **architectures from prior academic research**.  
-These systems were used in peer-reviewed studies to evaluate microservice security and design properties.  
-
-🔗 [microSecEnD – TUHH Software Security Group](https://tuhh-softsec.github.io/microSecEnD/models.html)  
-
-Examples include:  
-- A taxi-hailing system  
-- An online shop  
-- An IoT-based monitoring platform  
-- Various benchmark microservice systems  
-
-Focus: **empirical validation, security metrics, and vulnerability analysis**.  
-
+* [microSecEnD – TUHH Software Security Group](https://tuhh-softsec.github.io/microSecEnD/models.html)
 ---
 
 ## Group 3 – LLM-generated Architectures  
 
 This group contains **synthetic architectures generated using Large Language Models (LLMs)**.  
-They complement real-world and research-based architectures by providing additional scenarios for:  
-
-- Stress-testing architectural analysis methods  
-- Exploring “what-if” redesigns with embedded countermeasures  
-- Expanding coverage of architectural patterns and anti-patterns  
-
----
-
-## Folder Structure  
+They complement real-world architectures by providing additional scenarios for security.
 
