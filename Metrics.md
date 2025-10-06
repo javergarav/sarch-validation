@@ -1,4 +1,4 @@
-# Metric (Formalization)
+# Metric
 
 ## 1. Baseline (Architectural) Metrics
 
@@ -15,7 +15,9 @@ These metrics capture both **logical and deployment aspects** of the architectur
 
 ---
 
-## 2. Computed Metric: Overall Secure Communication and Endpoint Ratio (OSCER)
+## 2. Computed (Security) Metric:
+
+### Overall Secure Communication and Endpoint Ratio (OSCER)
 
 This metric evaluates the **overall security posture of communication channels and endpoints** by combining authentication, encryption, and secure endpoint coverage.
 
@@ -53,12 +55,9 @@ OSCER(A) >= tau_OSCER
 - If `OSCER(A)` meets or exceeds `tau_OSCER`, the architecture is considered compliant with the security policy.  
 - If `OSCER(A)` is below the threshold, it indicates **potential weaknesses** in authentication, encryption, or endpoint security, which should be further investigated.
 
----
 
 ## 5. Usage in Architectural Checking
 
 - Baseline metrics are extracted from the architectural graph (Neo4j).  
 - The computed metric `OSCER` is calculated using the formula above.  
-- Violations of the threshold (`OSCER < tau_OSCER`) trigger **instantiation of weaknesses** in the knowledge graph, linking them to relevant CWE entries or security rules.  
-
-This process enables **systematic, automated evaluation** of web-based software architectures, providing early detection of potential security gaps.
+- Violations of the threshold (`OSCER < tau_OSCER`) trigger **instantiation of weaknesses** in the knowledge graph, linking them to relevant CWE entries or security rules.
