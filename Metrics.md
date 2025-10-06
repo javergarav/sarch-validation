@@ -1,52 +1,64 @@
 # Metric (Formalization)
 
-## Baseline (Architectural) Metrics
+## 1. Baseline (Architectural) Metrics
 
-To define this computed metric, we need the following baseline metrics extracted from the architectural graph:
+The following baseline metrics are extracted from the architectural graph and serve as inputs for the computed metric:
 
-| Metric | Description |
-|--------|-------------|
-| **N_Components** | Total number of components in the architecture |
-| **N_Connectors** | Total number of connectors (communication links) |
-| **N_Endpoints** | Total number of service endpoints |
-| **N_AuthenticatedConnections** | Number of HTTP connections that are properly authenticated |
-| **N_EncryptedConnections** | Number of HTTP connections that use encryption |
-| **N_SecureEndpoints** | Number of endpoints that implement both authentication and CSRF protection |
-| **N_APIs** | Total number of exposed APIs |
+- **N_AuthenticatedConnections** = Number of HTTP connections with proper authentication  
+- **N_EncryptedConnections** = Number of HTTP connections using encryption (TLS/HTTPS)  
+- **N_SecureEndpoints** = Number of endpoints implementing both authentication and CSRF protection  
+- **N_Connectors** = Total number of connectors in the architecture  
+- **N_Endpoints** = Total number of endpoints  
+- **N_APIs** = Total number of exposed APIs  
+
+These metrics capture both **logical and deployment aspects** of the architecture, providing the structural context for security evaluation.
 
 ---
 
-## Computed Metric: Overall Secure Communication and Endpoint Ratio (OSCER)
+## 2. Computed Metric: Overall Secure Communication and Endpoint Ratio (OSCER)
 
 This metric evaluates the **overall security posture of communication channels and endpoints** by combining authentication, encryption, and secure endpoint coverage.
 
-\[
-\text{OSCER}(A) =
-\frac{
-\text{N\_AuthenticatedConnections} + \text{N\_EncryptedConnections} + \text{N\_SecureEndpoints}
-}{
-\text{N\_Connectors} + \text{N\_Endpoints} + \text{N\_APIs}
-}
-\]
+**Formula:**
+
+OSCER(A) = (N_AuthenticatedConnections + N_EncryptedConnections + N_SecureEndpoints)
+/ (N_Connectors + N_Endpoints + N_APIs)
+
 
 Where:
 
-- \( \text{N\_AuthenticatedConnections} \) = number of HTTP connections with proper authentication  
-- \( \text{N\_EncryptedConnections} \) = number of HTTP connections using encryption (TLS/HTTPS)  
-- \( \text{N\_SecureEndpoints} \) = number of endpoints implementing authentication **and** CSRF protection  
-- \( \text{N\_Connectors} \) = total number of connectors in the architecture  
-- \( \text{N\_Endpoints} \) = total number of endpoints  
-- \( \text{N\_APIs} \) = total number of exposed APIs  
+- `N_AuthenticatedConnections` = Number of authenticated HTTP connections  
+- `N_EncryptedConnections` = Number of encrypted HTTP connections  
+- `N_SecureEndpoints` = Number of endpoints with authentication and CSRF protection  
+- `N_Connectors` = Total connectors  
+- `N_Endpoints` = Total endpoints  
+- `N_APIs` = Total exposed APIs  
 
-**Interpretation:**  
+---
 
-- The value of `OSCER(A)` ranges between 0 and 1.  
-- Higher values indicate better coverage of secure communication and endpoint protection across the architecture.
+## 3. Interpretation
 
-**Security Rule:**  
+- The value of `OSCER(A)` ranges from **0 to 1**.  
+- Higher values indicate **better coverage of secure communication channels and endpoint protection**.  
+- It provides a **single quantitative indicator** combining multiple security aspects of the architecture.  
 
-\[
-\text{OSCER}(A) \geq \tau_{\text{OSCER}}
-\]
+---
 
-Where \( \tau_{\text{OSCER}} \) is a predefined threshold representing the minimum acceptable security posture.
+## 4. Security Rule
+
+A predefined threshold `tau_OSCER` is established to determine compliance:
+
+OSCER(A) >= tau_OSCER
+
+- If `OSCER(A)` meets or exceeds `tau_OSCER`, the architecture is considered compliant with the security policy.  
+- If `OSCER(A)` is below the threshold, it indicates **potential weaknesses** in authentication, encryption, or endpoint security, which should be further investigated.
+
+---
+
+## 5. Usage in Architectural Checking
+
+- Baseline metrics are extracted from the architectural graph (Neo4j).  
+- The computed metric `OSCER` is calculated using the formula above.  
+- Violations of the threshold (`OSCER < tau_OSCER`) trigger **instantiation of weaknesses** in the knowledge graph, linking them to relevant CWE entries or security rules.  
+
+This process enables **systematic, automated evaluation** of web-based software architectures, providing early detection of potential security gaps.
