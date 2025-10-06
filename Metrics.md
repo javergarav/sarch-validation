@@ -1,38 +1,52 @@
-## 1. Baseline (Architectural) Metrics
+# Metric (Formalization)
 
-Baseline metrics capture **structural properties** of the architecture. These metrics are extracted directly from the architectural graph and describe the configuration of components, connectors, and deployments.
+## Baseline (Architectural) Metrics
 
-| Metric | Description | Formula / Computation |
-|--------|-------------|----------------------|
-| **N\_Components** | Total number of components in the architecture | `COUNT(Component)` |
-| **N\_Connectors** | Total number of connectors (communication links) | `COUNT(Connector)` |
-| **N\_Endpoints** | Total number of service endpoints | `COUNT(Endpoint)` |
-| **N\_Databases** | Total number of databases in the architecture | `COUNT(Database)` |
-| **N\_Deployments** | Number of deployment nodes / execution environments | `COUNT(DeploymentNode)` |
-| **N\_APIs** | Total number of exposed APIs | `COUNT(API)` |
+To define this computed metric, we need the following baseline metrics extracted from the architectural graph:
 
-These baseline metrics provide the **raw counts and structural context** necessary for computing security metrics.
-
----
-
-## 2. Computed (Security) Metrics
-
-Computed metrics are derived from baseline metrics and **combine multiple architectural characteristics** to evaluate specific security properties. Each metric is compared against a **predefined threshold** \( \tau \) to determine compliance.
-
-| Metric | Description | Computation | Threshold Condition |
-|--------|-------------|------------|------------------|
-| **UAC (Unauthenticated Connections)** | Number of HTTP connections without authentication | `UAC = COUNT(unauthenticated_connections)` | `UAC <= τ_UAC` |
-| **UEC (Unencrypted Communications)** | Number of communication links without encryption | `UEC = COUNT(unencrypted_connections)` | `UEC <= τ_UEC` |
-| **CSRF (CSRF Vulnerable Endpoints)** | Endpoints lacking CSRF protection | `CSRF = COUNT(csrf_vulnerable_endpoints)` | `CSRF <= τ_CSRF` |
-| **MA (Missing Authentication)** | Endpoints without authentication mechanisms | `MA = COUNT(unauthenticated_endpoints)` | `MA <= τ_MA` |
-| **MAC (Missing Access Control)** | Endpoints without proper authorization | `MAC = COUNT(unauthorized_endpoints)` | `MAC <= τ_MAC` |
-| **SDE (Sensitive Data Exposure)** | Endpoints exposing sensitive data | `SDE = COUNT(sensitive_endpoints)` | `SDE <= τ_SDE` |
-| **SQLi (SQL Injection Vulnerability)** | Databases not using parameterized queries | `SQLi = COUNT(sql_injection_vulnerable_dbs)` | `SQLi <= τ_SQLi` |
-| **UPC (Unprotected Credentials)** | Databases with unprotected credentials | `UPC = COUNT(unprotected_credentials_dbs)` | `UPC <= τ_UPC` |
-| **EDC (Exposed Diagnostic Components)** | Monitoring components without security | `EDC = COUNT(exposed_diagnostic_components)` | `EDC <= τ_EDC` |
-| **VD (Vulnerable Dependencies)** | Dependencies with known vulnerabilities | `VD = COUNT(vulnerable_dependencies)` | `VD <= τ_VD` |
-| **UEI (Unprotected Eureka Instances)** | Eureka registry instances without access control | `UEI = COUNT(unprotected_eureka_instances)` | `UEI <= τ_UEI` |
-| **UIC (Unauthenticated Inter-Component Communication)** | Inter-service communication without authentication | `UIC = COUNT(unauthenticated_inter_component_connections)` | `UIC <= τ_UIC` |
-| **EP (Excessive Privileges)** | Connections where components exceed required privileges | `EP = COUNT(excessive_privilege_connections)` | `EP <= τ_EP` |
+| Metric | Description |
+|--------|-------------|
+| **N_Components** | Total number of components in the architecture |
+| **N_Connectors** | Total number of connectors (communication links) |
+| **N_Endpoints** | Total number of service endpoints |
+| **N_AuthenticatedConnections** | Number of HTTP connections that are properly authenticated |
+| **N_EncryptedConnections** | Number of HTTP connections that use encryption |
+| **N_SecureEndpoints** | Number of endpoints that implement both authentication and CSRF protection |
+| **N_APIs** | Total number of exposed APIs |
 
 ---
+
+## Computed Metric: Overall Secure Communication and Endpoint Ratio (OSCER)
+
+This metric evaluates the **overall security posture of communication channels and endpoints** by combining authentication, encryption, and secure endpoint coverage.
+
+\[
+\text{OSCER}(A) =
+\frac{
+\text{N\_AuthenticatedConnections} + \text{N\_EncryptedConnections} + \text{N\_SecureEndpoints}
+}{
+\text{N\_Connectors} + \text{N\_Endpoints} + \text{N\_APIs}
+}
+\]
+
+Where:
+
+- \( \text{N\_AuthenticatedConnections} \) = number of HTTP connections with proper authentication  
+- \( \text{N\_EncryptedConnections} \) = number of HTTP connections using encryption (TLS/HTTPS)  
+- \( \text{N\_SecureEndpoints} \) = number of endpoints implementing authentication **and** CSRF protection  
+- \( \text{N\_Connectors} \) = total number of connectors in the architecture  
+- \( \text{N\_Endpoints} \) = total number of endpoints  
+- \( \text{N\_APIs} \) = total number of exposed APIs  
+
+**Interpretation:**  
+
+- The value of `OSCER(A)` ranges between 0 and 1.  
+- Higher values indicate better coverage of secure communication and endpoint protection across the architecture.
+
+**Security Rule:**  
+
+\[
+\text{OSCER}(A) \geq \tau_{\text{OSCER}}
+\]
+
+Where \( \tau_{\text{OSCER}} \) is a predefined threshold representing the minimum acceptable security posture.
